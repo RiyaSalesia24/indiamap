@@ -624,7 +624,7 @@ h1 {
     });
   }
 
-  fetch(data/"Indian_States.geojson")
+  fetch("Indian_States.geojson")
     .then(res => res.json())
     .then(data => {
       geojsonLayer = L.geoJSON(data, {
