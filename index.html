@@ -487,7 +487,20 @@ h1 {
      ],
   };
 
-  const map = L.map('map').setView([22.5, 78.9], 5);
+const map = L.map('map', {
+  center: [22.5, 78.9],
+  zoom: 5,
+  minZoom: 4,
+  maxZoom: 8,
+  zoomControl: true,
+  scrollWheelZoom: true,
+  maxBounds: [
+    [6.5, 67],  // Southwest corner of India
+    [37.5, 97.5]  // Northeast corner of India
+  ],
+  maxBoundsViscosity: 1.0 // Stops dragging outside bounds
+});
+
 
   // Updated color scheme based on your requirements
   const stateColors = {
