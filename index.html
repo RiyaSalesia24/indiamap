@@ -197,17 +197,88 @@ background: linear-gradient(to bottom right, #ffffff, #ccffcc); /* softer minty 
   stroke-width: 3;
   cursor: pointer;
 }
+#map-container {
+  position: relative;
+  flex: 2;
+  height: 100%;
+}
+
+#search-container {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 1000;
+}
+
+#state-search {
+  padding: 5px 4px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  outline: none;
+  width: 200px;
+}
+
+#state-search:focus {
+  border-color: #ff9933;
+  box-shadow: 0 2px 8px rgba(255, 153, 51, 0.3);
+}
+
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1001;
+  display: none;
+}
+
+.search-suggestion {
+  padding: 8px 9px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.search-suggestion:hover {
+  background-color: #f0fff4;
+}
+
+.search-suggestion:last-child {
+  border-bottom: none;
+}
+
+.highlighted-state {
+  stroke: #ff9933 !important;
+  stroke-width: 4 !important;
+  fill-opacity: 1 !important;
+}
+
 
 </style>
 </head>
 <body>
+
 <div class="title-box">
   <h1>Ammended BharatNet Program - Deployment Overview </h1>
   <hr class="divider">
-  <h2>A State-Wise Interactive Display of India’s Digital Infrastructure Rollout</h2>
+  <h2>A State-Wise Interactive Display of India's Digital Infrastructure Rollout</h2>
 </div>
   <div class="container">
-    <div id="map"></div>
+    <div id="map-container">
+      <div id="search-container">
+        <input type="text" id="state-search" placeholder="Search for a state..." />
+        <div class="search-suggestions" id="search-suggestions"></div>
+      </div>
+      <div id="map"></div>
+    </div>
+
     <div id="sidebar">
       <div id="info">
         <div class="info-title">State Information</div>
@@ -215,6 +286,7 @@ background: linear-gradient(to bottom right, #ffffff, #ccffcc); /* softer minty 
       </div>
     </div>
   </div>
+
 
   <!-- Tooltip for state names -->
   <div class="state-tooltip" id="stateTooltip"></div>
@@ -247,7 +319,7 @@ background: linear-gradient(to bottom right, #ffffff, #ccffcc); /* softer minty 
       {
         "Package Number" : "6/UP(E)",
         "PIA": "RVNL",
-        "GPs in Scope": { "New/Upgraded": "3,769/12,449", "Total": "16,218" },
+        "GPs in Scope": { "New/Uploaded": "3,769/12,449", "Total": "16,218" },
         "Active FTTH Connections": "18,454" ,
         "HOTO Completed GPs": { "Target": 6225, "Count": 4089, "Target Achieved %": 66 },
         "Survey Completed GPs": { "Physical (Target)": " 2,154", "Desktop/Physical": "9674 / 1331", "Target Achieved in Physical Survey %": 42 },
@@ -504,6 +576,7 @@ background: linear-gradient(to bottom right, #ffffff, #ccffcc); /* softer minty 
         "Commissioned": { "Milestones (May 25)":"639", "Target Achieved %": "-" }
       }
      ],
+
   };
 
 const map = L.map('map', {
@@ -552,7 +625,6 @@ const map = L.map('map', {
     "Mizoram": "#ffb6c1",
     "Tripura": "#ffb6c1",
     "Meghalaya":"#ffb6c1",
-    "Haryana": "#ffb6c1",
 
     // Default colors for other states
     "Andhra Pradesh": "#f5f5dc",
@@ -571,10 +643,90 @@ const map = L.map('map', {
   };
 
   let geojsonLayer;
+  let allStates = [];
+  let currentHighlightedLayer = null;
   const tooltip = document.getElementById('stateTooltip');
+  const searchInput = document.getElementById('state-search');
+  const suggestionsDiv = document.getElementById('search-suggestions');
 
   function getStateColor(stateName) {
     return stateColors[stateName] || "#bdc3c7"; // default grey if state not found
+  }
+
+  function displayStateInfo(name) {
+    const infoDiv = document.getElementById("info");
+    const packages = stateInfo[name] || [];
+
+    if (packages.length === 0) {
+      infoDiv.innerHTML = `<div class="info-title">State Information</div><div class="package-name">${name}</div><p style="text-align:center;">No data available for ${name}</p>`;
+      return;
+    }
+
+    let html = `<div class="info-title">State Information</div>`;
+    html += `<div class="package-name">${name}</div>`;
+
+    packages.forEach((info, index) => {
+      const gpsScope = info["GPs in Scope"] || {};
+      const hotos = info["HOTO Completed GPs"] || {};
+      const surveys = info["Survey Completed GPs"] || {};
+      const commissioned = info["Commissioned"] || {};
+
+      html += `
+<div class="info-card">
+  <p><strong>Package Number ${info["Package Number"] ? " - " + info["Package Number"] : ""}</strong></p>
+  <p><strong>PIA:</strong> ${info["PIA"]}</p>
+  <p><strong>GPs in Scope:</strong></p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;New/Upgraded: ${gpsScope["New/Upgraded"] || "-"}</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;Total: ${gpsScope["Total"] || "-"}</p>
+  <p><strong>Active FTTH Connections:</strong> ${info["Active FTTH Connections"]}</p>
+  <p><strong>HOTO Completed GPs:</strong></p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;Target: ${hotos["Target"] || "-"}</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;Count: ${hotos["Count"] || "-"}</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;Target Achieved (%): ${hotos["Target Achieved %"] || "-"}</p>
+  <p><strong>Survey Completed GPs:</strong></p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;Desktop/Physical: ${surveys["Desktop/Physical"] || "-"}</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;Physical (Target): ${surveys["Physical (Target)"] || "-"}</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;Target Achieved in Physical Survey (%): ${surveys["Target Achieved in Physical Survey %"] || "-"}</p>
+  <p><strong>Commissioned (in ring and visible):</strong></p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;Milestones (May 25): ${commissioned["Milestones (May 25)"] || "-"}</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;Target Achieved (%): ${commissioned["Target Achieved %"] || "-"}</p>
+</div>
+        `;
+    });
+
+    infoDiv.innerHTML = html;
+  }
+
+  function highlightState(stateName) {
+    // Remove previous highlight
+    if (currentHighlightedLayer) {
+      geojsonLayer.resetStyle(currentHighlightedLayer);
+    }
+
+    // Find and highlight the new state
+    geojsonLayer.eachLayer(function(layer) {
+      const rawName = layer.feature.properties.NAME_1;
+      const name = (rawName === "Uttar Pradesh East" || rawName === "Uttar Pradesh West") ? "Uttar Pradesh" : rawName;
+      
+      if (name === stateName) {
+        layer.setStyle({
+          weight: 4,
+          color: "#ff9933",
+          fillColor: getStateColor(name),
+          fillOpacity: 1,
+          dashArray: '',
+        });
+        
+        // Pan to the state
+        map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+        
+        // Display state info
+        displayStateInfo(name);
+        
+        currentHighlightedLayer = layer;
+        return;
+      }
+    });
   }
 
   function onEachFeature(feature, layer) {
@@ -583,14 +735,17 @@ const map = L.map('map', {
 
     layer.on({
       mouseover: function (e) {
-        const currentColor = getStateColor(name);
-        e.target.setStyle({
-          weight: 3,
-          color: "#000",
-          fillColor: currentColor,
-          fillOpacity: 0.9,
-          dashArray: '',
-        });
+        // Don't change style if this is the highlighted state
+        if (currentHighlightedLayer !== e.target) {
+          const currentColor = getStateColor(name);
+          e.target.setStyle({
+            weight: 3,
+            color: "#000",
+            fillColor: currentColor,
+            fillOpacity: 0.9,
+            dashArray: '',
+          });
+        }
         
         // Show tooltip with state name
         tooltip.innerHTML = name;
@@ -606,59 +761,93 @@ const map = L.map('map', {
         tooltip.style.top = (e.originalEvent.pageY - 30) + 'px';
       },
       mouseout: function (e) {
-        geojsonLayer.resetStyle(e.target);
+        // Don't reset style if this is the highlighted state
+        if (currentHighlightedLayer !== e.target) {
+          geojsonLayer.resetStyle(e.target);
+        }
         // Hide tooltip
         tooltip.classList.remove('visible');
       },
       click: function () {
-        const infoDiv = document.getElementById("info");
-        const packages = stateInfo[name] || [];
-
-        if (packages.length === 0) {
-          infoDiv.innerHTML = `<div class="info-title">State Information</div><p style="text-align:center;">No data available for ${name}</p>`;
-          return;
-        }
-
-        let html = `<div class="info-title">State Information</div>`;
-        html += `<div class="package-name">${name}</div>`;
-
-        packages.forEach((info, index) => {
-          const gpsScope = info["GPs in Scope"] || {};
-          const hotos = info["HOTO Completed GPs"] || {};
-          const surveys = info["Survey Completed GPs"] || {};
-          const commissioned = info["Commissioned"] || {};
-
-          html += `
-  <div class="info-card">
-    <p><strong>Package Number ${info["Package Number"] ? " - " + info["Package Number"] : ""}</strong></p>
-    <p><strong>PIA:</strong> ${info["PIA"]}</p>
-    <p><strong>GPs in Scope:</strong></p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;New/Upgraded: ${gpsScope["New/Upgraded"] || "-"}</p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;Total: ${gpsScope["Total"] || "-"}</p>
-    <p><strong>Active FTTH Connections:</strong> ${info["Active FTTH Connections"]}</p>
-    <p><strong>HOTO Completed GPs:</strong></p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;Target: ${hotos["Target"] || "-"}</p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;Count: ${hotos["Count"] || "-"}</p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;Target Achieved (%): ${hotos["Target Achieved %"] || "-"}</p>
-    <p><strong>Survey Completed GPs:</strong></p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;Desktop/Physical: ${surveys["Desktop/Physical"] || "-"}</p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;Physical (Target): ${surveys["Physical (Target)"] || "-"}</p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;Target Achieved in Physical Survey (%): ${surveys["Target Achieved in Physical Survey %"] || "-"}</p>
-    <p><strong>Commissioned (in ring and visible):</strong></p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;Milestones (May 25): ${commissioned["Milestones (May 25)"] || "-"}</p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;Target Achieved (%): ${commissioned["Target Achieved %"] || "-"}</p>
-  </div>
-          `;
-        });
-
-        infoDiv.innerHTML = html;
+        highlightState(name);
       }
     });
   }
 
+  // Search functionality
+  function filterStates(searchTerm) {
+    if (!searchTerm.trim()) {
+      suggestionsDiv.style.display = 'none';
+      return;
+    }
+
+    const filtered = allStates.filter(state => 
+      state.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (filtered.length === 0) {
+      suggestionsDiv.style.display = 'none';
+      return;
+    }
+
+    let html = '';
+    filtered.forEach(state => {
+      html += `<div class="search-suggestion" data-state="${state}">${state}</div>`;
+    });
+
+    suggestionsDiv.innerHTML = html;
+    suggestionsDiv.style.display = 'block';
+  }
+
+  // Event listeners for search
+  searchInput.addEventListener('input', function(e) {
+    filterStates(e.target.value);
+  });
+
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      const searchTerm = e.target.value.trim();
+      const matchedState = allStates.find(state => 
+        state.toLowerCase() === searchTerm.toLowerCase()
+      );
+      
+      if (matchedState) {
+        highlightState(matchedState);
+        suggestionsDiv.style.display = 'none';
+        searchInput.value = matchedState;
+      }
+    }
+  });
+
+  // Click on suggestions
+  suggestionsDiv.addEventListener('click', function(e) {
+    if (e.target.classList.contains('search-suggestion')) {
+      const stateName = e.target.getAttribute('data-state');
+      highlightState(stateName);
+      searchInput.value = stateName;
+      suggestionsDiv.style.display = 'none';
+    }
+  });
+
+  // Hide suggestions when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!searchInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+      suggestionsDiv.style.display = 'none';
+    }
+  });
+
   fetch("Indian_States.geojson")
     .then(res => res.json())
     .then(data => {
+      // Extract unique state names for search
+      const stateNames = new Set();
+      data.features.forEach(feature => {
+        const rawName = feature.properties.NAME_1;
+        const name = (rawName === "Uttar Pradesh East" || rawName === "Uttar Pradesh West") ? "Uttar Pradesh" : rawName;
+        stateNames.add(name);
+      });
+      allStates = Array.from(stateNames).sort();
+
       geojsonLayer = L.geoJSON(data, {
         style: function (feature) {
           const rawName = feature.properties.NAME_1;
