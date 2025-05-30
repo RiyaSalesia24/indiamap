@@ -337,6 +337,8 @@ background: linear-gradient(to bottom right, #ffffff, #ccffcc); /* softer minty 
         "Commissioned": { "Milestones (May 25)":"362", "Target Achieved %": "-" }
       }
      ],
+
+
     "West Bengal": [
       {
         "Package Number" : 10,
@@ -595,50 +597,49 @@ const map = L.map('map', {
 
   // Updated color scheme based on your requirements
   const stateColors = {
-    // Working
+    // Agreement Done 
     "Punjab": "#28a745",
     "Uttar Pradesh": "#28a745", 
     "Himachal Pradesh": "#28a745",
     "West Bengal": "#28a745",
     "Bihar": "#28a745",
     "Andaman and Nicobar": "#28a745",
+    "Uttaranchal": "#28a745",
+    "Madhya Pradesh": "#28a745",
 
-    // AWO Issued
-    "Madhya Pradesh": "#ffa07a",
-    "Uttarakhand": "#ffa07a",
-    "Jammu and Kashmir": "#ffa07a",
-    "Karnataka": "#ffa07a",
-    "Goa": "#ffa07a",
-    "Puducherry": "#ffa07a",
-    "Kerala": "#ffa07a",
-    "Arunachal Pradesh": "#ffa07a",
-    "Nagaland": "#ffa07a",
-    "Manipur": "#ffa07a",
-    "Dadra and Nagar Haveli": "#ffa07a",
-    "Daman and Diu": "#ffa07a",
+    // AWO Signed
+    "Uttaranchal": "#E78B48",
+    "Jammu and Kashmir": "#E78B48",
+    "Ladakh": "#E78B48",
+    "Karnataka": "#E78B48",
+    "Goa": "#E78B48",
+    "Puducherry": "#E78B48",
+    "Kerala": "#E78B48",
+    "Arunachal Pradesh": "#E78B48",
+    "Nagaland": "#E78B48",
+    "Manipur": "#E78B48",
+    "Dadra and Nagar Haveli": "#E78B48",
+    "Daman and Diu": "#E78B48",
 
-    // Under consideration 
-    "Rajasthan": "#ffb6c1",
-    "Haryana": "#ffb6c1",
-    "Assam": "#ffb6c1",
-    "Mizoram": "#ffb6c1",
-    "Tripura": "#ffb6c1",
-    "Meghalaya":"#ffb6c1",
-
-    // Default colors for other states
-    "Andhra Pradesh": "#f5f5dc",
-    "Telangana": "#f5f5dc",
-    "Tamil Nadu": "#f5f5dc",
-    "Maharashtra": "#f5f5dc",
-    "Gujarat": "#f5f5dc",
-    "Delhi": "#f5f5dc",
-    "Jharkhand": "#f5f5dc",
-    "Chhattisgarh": "#f5f5dc",
-    "Chandigarh": "#f5f5dc",
-    "Lakshadweep": "#f5f5dc",
-    "Orissa": "#f5f5dc",
-    "Uttaranchal": "#f5f5dc",
-    "Sikkim": "#f5f5dc",
+    // Under consideration / Others
+    "Rajasthan": "#DA6C6C",
+    "Haryana": "#DA6C6C",
+    "Assam": "#DA6C6C",
+    "Mizoram": "#DA6C6C",
+    "Tripura": "#DA6C6C",
+    "Meghalaya":"#DA6C6C",
+    "Andhra Pradesh": "#DA6C6C",
+    "Telangana": "#DA6C6C",
+    "Tamil Nadu": "#DA6C6C",
+    "Maharashtra": "#DA6C6C",
+    "Gujarat": "#DA6C6C",
+    "Delhi": "#DA6C6C",
+    "Jharkhand": "#DA6C6C",
+    "Chhattisgarh": "#DA6C6C",
+    "Chandigarh": "#DA6C6C",
+    "Lakshadweep": "#DA6C6C",
+    "Orissa": "#DA6C6C",
+    "Sikkim": "#DA6C6C",
   };
 
   let geojsonLayer;
@@ -906,15 +907,24 @@ const map = L.map('map', {
     });
 </script>
 
-<div id="legend" style="position: absolute; bottom: 25px; left: 60px; background: rgba(255,255,255,0.95); padding: 8px 13px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); font-size: 10px; max-width: 280px;">
-  <strong style="font-size: 13px; color: #2c3e50;">State Color Legend</strong><br><br>
-  <div style="margin-bottom: 8px;"><span style="display:inline-block; width: 10px; height: 10px; background:#28a745; margin-right: 8px; border-radius: 2px;"></span> Working </div>
-  <div style="margin-bottom: 8px;"><span style="display:inline-block; width: 10px; height: 10px; background:#ffa07a; margin-right: 8px; border-radius: 2px;"></span> AWO Issued </div>
-  <div style="margin-bottom: 8px;"><span style="display:inline-block; width: 10px; height: 10px; background:#ffb6c1; margin-right: 8px; border-radius: 2px;"></span> Under Consideration </div>
-<div style="margin-bottom: 8px;"><span style="display:inline-block; width: 10px; height: 10px; background:#f5f5dc; margin-right: 8px; border-radius: 2px;"></span> Others </div>
-  <br>
-  <div style="font-size: 12px; color: #666; font-style: italic;">
-   </div>
+<div id="legend" style="position: absolute; bottom: 20px; left: 55px; background: rgba(255,255,255,0.98); padding: 6px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-size: 9px; max-width: 140px; border: 1px solid rgba(200,200,200,0.3);">
+  <strong style="font-size: 10px; color: #2c3e50; display: block; margin-bottom: 4px;">🗺️ States</strong>
+  
+  <div style="margin-bottom: 3px; display: flex; align-items: center;">
+    <span style="display:inline-block; width: 8px; height: 8px; background:#28a745; margin-right: 6px; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.1);"></span> 
+    <span style="font-size: 8px;">Working</span>
+  </div>
+  
+  <div style="margin-bottom: 3px; display: flex; align-items: center;">
+    <span style="display:inline-block; width: 8px; height: 8px; background:#ffa07a; margin-right: 6px; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.1);"></span> 
+    <span style="font-size: 8px;">AWO Issued</span>
+  </div>
+  
+  <div style="margin-bottom: 0; display: flex; align-items: center;">
+    <span style="display:inline-block; width: 8px; height: 8px; background:#ffb6c1; margin-right: 6px; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.1);"></span> 
+    <span style="font-size: 8px;">Under Consideration</span>
+  </div>
+</div>
 </div>
 </body>
 </html>
