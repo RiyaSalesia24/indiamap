@@ -701,20 +701,25 @@ const map = L.map('map', {
   <p><strong>Package Number ${info["Package Number"] ? " - " + info["Package Number"] : ""}</strong></p>
   <p><strong>PIA:</strong> ${info["PIA"]}</p>
   <p><strong>GPs in Scope:</strong></p>
-  <p>&nbsp;&nbsp;&nbsp;&nbsp;New/Upgraded: ${gpsScope["New/Upgraded"] || "-"}</p>
-  <p>&nbsp;&nbsp;&nbsp;&nbsp;Total: ${gpsScope["Total"] || "-"}</p>
+  <p>    New/Upgraded: ${gpsScope["New/Upgraded"] || "-"}</p>
+  <p>    Total: ${gpsScope["Total"] || "-"}</p>
   <p><strong>Active FTTH Connections:</strong> ${info["Active FTTH Connections"]}</p>
   <p><strong>HOTO Completed GPs:</strong></p>
-  <p>&nbsp;&nbsp;&nbsp;&nbsp;Target: ${hotos["Target"] || "-"}</p>
-  <p>&nbsp;&nbsp;&nbsp;&nbsp;Count: ${hotos["Count"] || "-"}</p>
-  <p>&nbsp;&nbsp;&nbsp;&nbsp;Target Achieved (%): ${hotos["Target Achieved %"] || "-"}</p>
+  <p>    Target: ${hotos["Target"] || "-"}</p>
+  <p>    Count: ${hotos["Count"] || "-"}</p>
+  <p>    Target Achieved (%): ${hotos["Target Achieved %"] || "-"}</p>
   <p><strong>Survey Completed GPs:</strong></p>
-  <p>&nbsp;&nbsp;&nbsp;&nbsp;Desktop/Physical: ${surveys["Desktop/Physical"] || "-"}</p>
-  <p>&nbsp;&nbsp;&nbsp;&nbsp;Physical (Target): ${surveys["Physical (Target)"] || "-"}</p>
-  <p>&nbsp;&nbsp;&nbsp;&nbsp;Target Achieved in Physical Survey (%): ${surveys["Target Achieved in Physical Survey %"] || "-"}</p>
+  <p>    Desktop/Physical: ${surveys["Desktop/Physical"] || "-"}</p>
+  <p>    Physical (Target): ${surveys["Physical (Target)"] || "-"}</p>
+  <p>    Target Achieved in Physical Survey (%): ${surveys["Target Achieved in Physical Survey %"] || "-"}</p>
   <p><strong>Commissioned (in ring and visible):</strong></p>
-  <p>&nbsp;&nbsp;&nbsp;&nbsp;Milestones (May 25): ${commissioned["Milestones (May 25)"] || "-"}</p>
-  <p>&nbsp;&nbsp;&nbsp;&nbsp;Target Achieved (%): ${commissioned["Target Achieved %"] || "-"}</p>
+  <p>    Milestones (May 25): ${commissioned["Milestones (May 25)"] || "-"}</p>
+  <p>    Target Achieved (%): ${commissioned["Target Achieved %"] || "-"}</p>
+  <p><strong>GP Deployment Metrics:</strong></p>
+  <p>    GPs Last Week: ${info["GPs Last Week"] || "-"}</p>
+  <p>    GPs This Week: ${info["GPs This Week"] || "-"}</p>
+  <p>    SNOC: ${info["SNOC"] || "-"}</p>
+  <p>    No. of GPs (Dedicated Electric Connection): ${info["No. of GPs (Dedicated Electric Connection)"] || "-"}</p>
 </div>
         `;
     });
