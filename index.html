@@ -39,16 +39,6 @@
       /* removes gap inside the title box */
     }
 
-    .title-box {
-      background: linear-gradient(135deg, #fffef5, #e6f9e6);
-      /* theme-matching soft gradient */
-      padding: 8px 18px;
-      border-radius: 10px;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-      margin-bottom: 18px;
-      text-align: center;
-      display: inline-block;
-    }
 
     .divider {
       border: none;
@@ -298,16 +288,103 @@
       stroke-width: 4 !important;
       fill-opacity: 1 !important;
     }
+
+.gradient-header {
+  max-width: 900px;
+  margin: 8px auto 14px;
+  padding: 16px 20px;
+  background: linear-gradient(90deg, #fff0db, #ffffff, #e6ffe6); /* light tricolour */
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.gradient-header h1,
+.gradient-header h2 {
+  font-family: 'Times New Roman', serif;
+  margin: 0;
+}
+
+.header-divider {
+  border: none;
+  border-top: 1.5px solid #aa4400;
+  margin: 6px auto;
+  width: 75%;
+  opacity: 0.8;
+}
+
+.gradient-header h1 {
+  font-size: 1.3rem;
+  color: #822000;
+}
+
+.gradient-header h2 {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+
+.floating-logos {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  gap: 14px;
+}
+
+.floating-logos img {
+  height: 65px;
+  object-fit: contain;
+  border-radius: 4px;
+  background: transparent;
+  transition: transform 0.2s ease;
+}
+
+.floating-logos img:hover {
+  transform: scale(1.05);
+}
+
+
+@media (max-width: 768px) {
+  .logo-strip {
+    position: static;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .gradient-header h1 {
+    font-size: 1.1rem;
+  }
+
+  .gradient-header h2 {
+    font-size: 0.85rem;
+  }
+}
+
+
   </style>
 </head>
 
 <body>
 
-  <div class="title-box">
-    <h1>Ammended BharatNet Program - Deployment Overview </h1>
-    <hr class="divider">
+<!-- LOGO STRIP OUTSIDE THE TITLE BAR -->
+<div class="floating-logos">
+  <img src="logo1.png" alt="Logo 1" />
+  <img src="logo2.png" alt="Logo 2" />
+  <img src="logo3.png" alt="Logo 3" />
+</div>
+
+<!-- TITLE BAR BELOW, CENTERED -->
+<div class="gradient-header">
+  <div class="header-text">
+    <h1>Amended BharatNet Program - Deployment Overview</h1>
+    <hr class="header-divider">
     <h2>A State-Wise Interactive Display of India's Digital Infrastructure Rollout</h2>
   </div>
+</div>
+
+
   <div class="container">
     <div id="map-container">
       <div id="search-container">
